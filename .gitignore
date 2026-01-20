@@ -1,0 +1,44 @@
+# Rust
+target/
+**/*.rs.bk
+
+# Downloaded data
+gfs_data/
+gfs_2020_data/
+wind_data/
+wind_2020_data/
+wind_only/
+wind_filtered/
+*.grb2
+*.grib2
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+.venv/
+*.egg-info/
+
+# Outputs
+*.png
+*.csv
+*.nc
+
+# OS
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+*~
+
+# IDE
+.vscode/
+.idea/
+*.iml
+
+# IA
+.claude/

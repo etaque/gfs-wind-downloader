@@ -1,0 +1,13 @@
+[project]
+name = "gfs-wind-downloader"
+version = "0.1.0"
+description = "Download and process GFS wind data from NCAR RDA"
+requires-python = ">=3.10"
+dependencies = [
+    "pygrib>=2.1.0",
+    "numpy>=1.24.0",
+    "matplotlib>=3.7.0",
+]
+
+[project.scripts]
+process-wind = "process_wind_data:main"

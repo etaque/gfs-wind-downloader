@@ -1,0 +1,29 @@
+[package]
+name = "gfs_wind_downloader"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+# Async runtime
+tokio = { version = "1", features = ["full"] }
+
+# HTTP streaming (use rustls with ring)
+reqwest = { version = "0.12", features = ["stream", "rustls-tls"], default-features = false }
+
+# S3 (disable aws-lc, use ring crypto)
+aws-sdk-s3 = { version = "1", default-features = false, features = ["rt-tokio"] }
+aws-config = { version = "1", default-features = false, features = ["rt-tokio"] }
+aws-smithy-runtime = { version = "1", default-features = false, features = ["client", "connector-hyper-0-14-x", "tls-rustls"] }
+
+# GRIB2 parsing
+grib = "0.8"
+
+# CLI
+clap = { version = "4.0", features = ["derive"] }
+
+# Utilities
+chrono = "0.4"
+anyhow = "1.0"
+bytes = "1"
+futures = "0.3"
+tokio-stream = "0.1"
