@@ -62,9 +62,9 @@ Responsibilities:
 - Call `process_file()` for each GFS file
 - Handle errors per-file without stopping batch
 
-URL pattern used:
+URL pattern (NCAR THREDDS):
 ```
-https://data.rda.ucar.edu/ds084.1/{year}/{date}/gfs.0p25.{date}{hour}.f000.grib2
+https://thredds.rda.ucar.edu/thredds/fileServer/files/g/d084001/{year}/{date}/gfs.0p25.{date}{hour}.f000.grib2
 ```
 
 ### grib.rs - GRIB2 Stream Parser

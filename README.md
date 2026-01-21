@@ -39,6 +39,7 @@ cargo build --release
 | `--bucket` | Yes | S3 bucket name |
 | `--prefix` | No | S3 key prefix |
 | `--region` | No | AWS region |
+| `--endpoint-url` | No | Custom S3 endpoint (for MinIO) |
 
 ### Output
 
@@ -49,9 +50,39 @@ s3://<bucket>/<prefix>/wind_YYYYMMDD_HH.grb2
 
 ## Data Source
 
-- **Source:** NCEP GFS 0.25° Global Forecast Grids (NCAR RDA ds084.1)
+- **Source:** NCAR THREDDS server (ds084.1)
 - **Variables:** UGRD (U-wind) and VGRD (V-wind) at all levels
 - **Temporal:** 6-hourly (00, 06, 12, 18 UTC)
+- **Availability:** 2015 to present
+
+## Local Testing with MinIO
+
+Start a local S3-compatible storage:
+
+```bash
+docker compose up -d
+```
+
+Run the downloader against MinIO:
+
+```bash
+export $(cat .env | xargs)
+./target/release/gfs_wind_downloader \
+  --start-date 2020-01-01 \
+  --end-date 2020-01-01 \
+  --bucket gfs-wind \
+  --endpoint-url http://localhost:9002
+```
+
+Access MinIO:
+- Console: http://localhost:9003 (minioadmin/minioadmin)
+- API: http://localhost:9002
+
+Stop MinIO:
+
+```bash
+docker compose down
+```
 
 ## Reading the Data
 

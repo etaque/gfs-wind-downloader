@@ -43,4 +43,6 @@ Thumbs.db
 # IA
 .claude/
 
+# Local config
 .env
+minio-data/

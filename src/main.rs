@@ -31,6 +31,10 @@ struct Args {
     /// AWS region (defaults to AWS_REGION env var or us-east-1)
     #[arg(long)]
     region: Option<String>,
+
+    /// Custom S3 endpoint URL (for MinIO or other S3-compatible storage)
+    #[arg(long)]
+    endpoint_url: Option<String>,
 }
 
 /// Process a single GFS file: download, filter wind messages, upload to S3.
@@ -45,9 +49,10 @@ async fn process_file(
     let date_str = date.format("%Y%m%d").to_string();
     let year = date.format("%Y").to_string();
 
-    // NCAR RDA URL structure
+    // NCAR THREDDS server (historical GFS data, no auth required)
+    // Format: /files/g/d084001/{year}/{date}/gfs.0p25.{date}{hour}.f000.grib2
     let url = format!(
-        "https://data.rda.ucar.edu/ds084.1/{year}/{date_str}/gfs.0p25.{date_str}{hour}.f000.grib2"
+        "https://thredds.rda.ucar.edu/thredds/fileServer/files/g/d084001/{year}/{date_str}/gfs.0p25.{date_str}{hour}.f000.grib2"
     );
 
     // S3 key
@@ -127,9 +132,7 @@ async fn process_file(
     // Complete upload
     uploader.complete().await?;
 
-    println!(
-        "  Completed: {wind_messages} wind messages extracted from {total_messages} total"
-    );
+    println!("  Completed: {wind_messages} wind messages extracted from {total_messages} total");
 
     Ok(())
 }
@@ -157,7 +160,16 @@ async fn main() -> Result<()> {
 
     // Initialize AWS SDK
     let aws_config = aws_config::load_defaults(aws_config::BehaviorVersion::latest()).await;
-    let s3_client = aws_sdk_s3::Client::new(&aws_config);
+    let s3_config = if let Some(endpoint) = &args.endpoint_url {
+        aws_sdk_s3::config::Builder::from(&aws_config)
+            .endpoint_url(endpoint)
+            .region(aws_sdk_s3::config::Region::new("us-east-1"))
+            .force_path_style(true)
+            .build()
+    } else {
+        aws_sdk_s3::config::Builder::from(&aws_config).build()
+    };
+    let s3_client = aws_sdk_s3::Client::from_conf(s3_config);
 
     // Initialize HTTP client
     let http_client = reqwest::Client::builder()
